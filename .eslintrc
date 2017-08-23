@@ -1,0 +1,23 @@
+{
+  "extends": "airbnb-base",
+  "ecmaFeatures": {
+    "modules": true
+  },
+  "env": {
+    "browser": false,
+    "mocha": true,
+    "node": true,
+		"jest": true
+  },
+  "rules": {
+    "max-len": [1, 120],
+    "comma-dangle": ["error", "never"],
+    "guard-for-in": 0,
+    "new-cap": 0,
+    "no-confusing-arrow": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": [ "**/*.test.js" ] }
+    ]
+  }
+}

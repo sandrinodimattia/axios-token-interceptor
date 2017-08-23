@@ -1,0 +1,34 @@
+{
+  "name": "axios-token-interceptor",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "Sandrino Di Mattia <contact@sandrino.be>",
+  "license": "MIT",
+  "scripts": {
+    "test:watch": "jest --watch",
+    "test": "jest --colors --coverage --forceExit"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "moduleNameMapper": {
+      "^mongoose$": "<rootDir>/node_modules/mongoose"
+    }
+  },
+  "devDependencies": {
+    "axios": "^0.16.2",
+    "bluebird": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.2",
+    "eslint-plugin-import": "^2.2.0",
+    "jest": "^20.0.4",
+    "nock": "^9.0.14"
+  },
+  "dependencies": {
+    "lock": "^0.1.4"
+  }
+}
