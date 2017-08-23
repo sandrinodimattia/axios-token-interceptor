@@ -2,11 +2,15 @@
   "name": "axios-token-interceptor",
   "version": "0.1.0",
   "main": "index.js",
-  "author": "Sandrino Di Mattia <contact@sandrino.be>",
+  "author": "Sandrino Di Mattia",
   "license": "MIT",
   "scripts": {
     "test:watch": "jest --watch",
     "test": "jest --colors --coverage --forceExit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sandrinodimattia/axios-token-interceptor"
   },
   "jest": {
     "testEnvironment": "node",
@@ -14,10 +18,7 @@
       "/node_modules/"
     ],
     "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "moduleNameMapper": {
-      "^mongoose$": "<rootDir>/node_modules/mongoose"
-    }
+    "collectCoverage": true
   },
   "devDependencies": {
     "axios": "^0.16.2",
