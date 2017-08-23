@@ -1,6 +1,6 @@
-# Axios Token Provider
+# Axios Token Interceptor
 
-An interceptor which makes it easier to use tokens with [axios](https://github.com/mzabriskie/axios).
+An interceptor which makes it easier to work with tokens in [axios](https://github.com/mzabriskie/axios).
 
 ## Usage
 
