@@ -1,23 +1,23 @@
-const Lock = require('lock');
+var Lock = require('lock');
 
-module.exports = (getToken, options) => {
-  const lock = Lock();
-  const getMaxAge = options.getMaxAge || function getMaxAge() {
+module.exports = function (getToken, options) {
+  var lock = Lock();
+  var getMaxAge = options.getMaxAge || function getMaxAge() {
     return options.maxAge || 0;
   };
 
-  let cachedToken = null;
-  let cacheExpiration = null;
+  var cachedToken = null;
+  var cacheExpiration = null;
 
-  const cache = function getFromCache() {
+  var cache = function getFromCache() {
     if (cachedToken && cacheExpiration && cacheExpiration - Date.now() > 0) {
       return Promise.resolve(cachedToken);
     }
 
     // Get a new token and prevent concurrent request.
-    return new Promise((resolve, reject) => {
-      lock('cache', (unlockFn) => {
-        const unlock = unlockFn();
+    return new Promise(function (resolve, reject) {
+      lock('cache', function (unlockFn) {
+        var unlock = unlockFn();
 
         // Token was already loaded by the previous lock.
         if (cachedToken && cacheExpiration && cacheExpiration - Date.now() > 0) {
@@ -27,13 +27,13 @@ module.exports = (getToken, options) => {
 
         // Get the token.
         return getToken()
-          .then((token) => {
+          .then(function (token) {
             cachedToken = token;
             cacheExpiration = Date.now() + (getMaxAge(token));
             unlock();
             resolve(token);
           })
-          .catch((err) => {
+          .catch(function (err) {
             unlock();
             reject(err);
           });

@@ -1,11 +1,11 @@
-const tokenCache = require('./token-cache');
+var tokenCache = require('./token-cache');
 
 function getToken(options) {
   if (options.token) {
     return Promise.resolve(options.token);
   }
 
-  const token = options.getToken();
+  var token = options.getToken();
   if (typeof token !== 'object' || !token.then) {
     return Promise.resolve(token);
   }
@@ -14,14 +14,14 @@ function getToken(options) {
 }
 
 module.exports = function tokenInterceptor(options) {
-  const header = options.header || 'Authorization';
-  const headerFormatter = options.headerFormatter || function defaultHeaderFormatter(token) {
-    return `Bearer ${token}`;
+  var header = options.header || 'Authorization';
+  var headerFormatter = options.headerFormatter || function defaultHeaderFormatter(token) {
+    return 'Bearer ' + token;
   };
 
   return function interceptRequest(config) {
-    const requestConfig = config;
-    return getToken(options).then((token) => {
+    var requestConfig = config;
+    return getToken(options).then(function (token) {
       requestConfig.headers[header] = headerFormatter(token);
       return config;
     });
