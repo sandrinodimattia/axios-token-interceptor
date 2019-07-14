@@ -91,13 +91,13 @@ Now it could also be that the token itself contains the expiration time (this is
 
 ```js
 const cache = tokenProvider.tokenCache(
-  getTokenFromAuthorizationServer().then(res => res.body),
-  { getMaxAge: (res) => res.expires_in }
+  () => getTokenFromAuthorizationServer().then(res => res.body),
+  { getMaxAge: (body) => body.expires_in }
 );
 
 instance.interceptors.request.use(tokenProvider({
   getToken: cache,
-  headerFormatter: (res) => 'Bearer ' + res.access_token,
+  headerFormatter: (body) => 'Bearer ' + body.access_token,
 }));
 ```
 
