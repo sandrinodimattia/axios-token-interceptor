@@ -29,7 +29,7 @@ module.exports = (getToken, options) => {
         return getToken()
           .then((token) => {
             cachedToken = token;
-            cacheExpiration = Date.now() + (getMaxAge(token));
+            cacheExpiration = Date.now() + (getMaxAge(token) * 1000);
             unlock();
             resolve(token);
           })
