@@ -1,4 +1,4 @@
-const Lock = require('lock');
+const Lock = require('lock').Lock;
 
 module.exports = (getToken, options) => {
   const lock = Lock();

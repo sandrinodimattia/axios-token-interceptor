@@ -92,7 +92,7 @@ Now it could also be that the token itself contains the expiration time (this is
 ```js
 const cache = tokenProvider.tokenCache(
   () => getTokenFromAuthorizationServer().then(res => res.body),
-  { getMaxAge: (body) => body.expires_in }
+  { getMaxAge: (body) => body.expires_in * 1000 }
 );
 
 instance.interceptors.request.use(tokenProvider({
@@ -106,8 +106,10 @@ And the cache can also be reset:
 ```js
 const cache = tokenProvider.tokenCache(
   getTokenFromAuthorizationServer().then(res => res.body),
-  { getMaxAge: (res) => res.expires_in }
+  { getMaxAge: (res) => res.expires_in * 1000 }
 );
 
 cache.reset();
 ```
+
+> Note that `expires_in` coming from your authorization server is expressed in seconds, so you'll need to convert it to milliseconds when returning it to the `getMaxAge`function.

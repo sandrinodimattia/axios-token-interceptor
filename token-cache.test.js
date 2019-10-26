@@ -31,23 +31,23 @@ describe('cache', () => {
   test('should use the getMaxAge setting', () => {
     const getToken = jest
       .fn()
-      .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 50 }))
-      .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 100 }));
+      .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 2 }))
+      .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 5 }));
 
     const cache = tokenCache(getToken, {
-      getMaxAge: token => token.expires_in
+      getMaxAge: token => token.expires_in * 1000
     });
 
     return cache()
         .then((token) => {
           expect(token.access_token).toEqual('token1');
         })
-        .then(() => Promise.delay(20))
+        .then(() => Promise.delay(1000))
         .then(() => cache())
         .then((token) => {
           expect(token.access_token).toEqual('token1');
         })
-        .then(() => Promise.delay(40))
+        .then(() => Promise.delay(2000))
         .then(() => cache())
         .then((token) => {
           expect(token.access_token).toEqual('token2');
@@ -57,11 +57,11 @@ describe('cache', () => {
   test('should support reset', () => {
     const getToken = jest
       .fn()
-      .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 50 }))
-      .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 100 }));
+      .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 5 }))
+      .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 10 }));
 
     const cache = tokenCache(getToken, {
-      getMaxAge: token => token.expires_in
+      getMaxAge: token => token.expires_in * 1000
     });
 
     return cache()
