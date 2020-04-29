@@ -1,14 +1,20 @@
 {
-  "extends": "airbnb-base",
-  "ecmaFeatures": {
-    "modules": true
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
   },
   "env": {
     "browser": false,
     "mocha": true,
     "node": true,
-		"jest": true
+    "jest": true
   },
+  "extends": [
+    "airbnb-base",
+    "prettier"
+  ],
   "rules": {
     "max-len": [1, 120],
     "comma-dangle": ["error", "never"],
@@ -17,7 +23,9 @@
     "no-confusing-arrow": 0,
     "import/no-extraneous-dependencies": [
       "error",
-      { "devDependencies": [ "**/*.test.js" ] }
+      {
+        "devDependencies": ["**/*.test.js"]
+      }
     ]
   }
 }

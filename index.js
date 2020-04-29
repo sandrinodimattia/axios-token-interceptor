@@ -15,9 +15,11 @@ function getToken(options) {
 
 module.exports = function tokenInterceptor(options) {
   const header = options.header || 'Authorization';
-  const headerFormatter = options.headerFormatter || function defaultHeaderFormatter(token) {
-    return `Bearer ${token}`;
-  };
+  const headerFormatter =
+    options.headerFormatter ||
+    function defaultHeaderFormatter(token) {
+      return `Bearer ${token}`;
+    };
 
   return function interceptRequest(config) {
     const requestConfig = config;

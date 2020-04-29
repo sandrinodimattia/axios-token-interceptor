@@ -1,10 +1,12 @@
-const Lock = require('lock').Lock;
+const { Lock } = require('lock');
 
 module.exports = (getToken, options) => {
   const lock = Lock();
-  const getMaxAge = options.getMaxAge || function getMaxAge() {
-    return options.maxAge || 0;
-  };
+  const getMaxAge =
+    options.getMaxAge ||
+    function getMaxAge() {
+      return options.maxAge || 0;
+    };
 
   let cachedToken = null;
   let cacheExpiration = null;
@@ -20,7 +22,11 @@ module.exports = (getToken, options) => {
         const unlock = unlockFn();
 
         // Token was already loaded by the previous lock.
-        if (cachedToken && cacheExpiration && cacheExpiration - Date.now() > 0) {
+        if (
+          cachedToken &&
+          cacheExpiration &&
+          cacheExpiration - Date.now() > 0
+        ) {
           unlock();
           return resolve(cachedToken);
         }
@@ -29,7 +35,7 @@ module.exports = (getToken, options) => {
         return getToken()
           .then((token) => {
             cachedToken = token;
-            cacheExpiration = Date.now() + (getMaxAge(token));
+            cacheExpiration = Date.now() + getMaxAge(token);
             unlock();
             resolve(token);
           })

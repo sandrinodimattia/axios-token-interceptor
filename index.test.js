@@ -85,7 +85,7 @@ describe('axios-token-interceptor', () => {
 
     test('should set a custom header value', () => {
       const options = {
-        headerFormatter: token => `Token:${token}`,
+        headerFormatter: (token) => `Token:${token}`,
         getToken: () => Promise.resolve('abc')
       };
 
@@ -143,13 +143,17 @@ describe('axios-token-interceptor', () => {
     test('should use the getMaxAge setting', () => {
       const getToken = jest
         .fn()
-        .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 50 }))
-        .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 100 }));
+        .mockReturnValueOnce(
+          Promise.resolve({ access_token: 'token1', expires_in: 50 })
+        )
+        .mockReturnValueOnce(
+          Promise.resolve({ access_token: 'token2', expires_in: 100 })
+        );
 
       const options = {
-        headerFormatter: token => `Bearer ${token.access_token}`,
+        headerFormatter: (token) => `Bearer ${token.access_token}`,
         getToken: plugin.tokenCache(getToken, {
-          getMaxAge: token => token.expires_in
+          getMaxAge: (token) => token.expires_in
         })
       };
 
@@ -185,14 +189,18 @@ describe('axios-token-interceptor', () => {
     test('should support reset', () => {
       const getToken = jest
         .fn()
-        .mockReturnValueOnce(Promise.resolve({ access_token: 'token1', expires_in: 50 }))
-        .mockReturnValueOnce(Promise.resolve({ access_token: 'token2', expires_in: 100 }));
+        .mockReturnValueOnce(
+          Promise.resolve({ access_token: 'token1', expires_in: 50 })
+        )
+        .mockReturnValueOnce(
+          Promise.resolve({ access_token: 'token2', expires_in: 100 })
+        );
 
       const cache = plugin.tokenCache(getToken, {
-        getMaxAge: token => token.expires_in
+        getMaxAge: (token) => token.expires_in
       });
       const options = {
-        headerFormatter: token => `Bearer ${token.access_token}`,
+        headerFormatter: (token) => `Bearer ${token.access_token}`,
         getToken: cache
       };
 
@@ -217,8 +225,7 @@ describe('axios-token-interceptor', () => {
     });
 
     test('should not make concurrent calls for a cache miss', () => {
-      const getToken = jest.fn()
-        .mockReturnValueOnce(Promise.resolve('token1'));
+      const getToken = jest.fn().mockReturnValueOnce(Promise.resolve('token1'));
 
       const options = {
         getToken: plugin.tokenCache(getToken, {
@@ -227,19 +234,21 @@ describe('axios-token-interceptor', () => {
       };
 
       const interceptor = plugin(options);
-      return Promise.all([interceptor({ headers: {} }), interceptor({ headers: {} })])
-        .spread((config1, config2) => {
-          expect(config1).toEqual({
-            headers: {
-              Authorization: 'Bearer token1'
-            }
-          });
-          expect(config2).toEqual({
-            headers: {
-              Authorization: 'Bearer token1'
-            }
-          });
+      return Promise.all([
+        interceptor({ headers: {} }),
+        interceptor({ headers: {} })
+      ]).spread((config1, config2) => {
+        expect(config1).toEqual({
+          headers: {
+            Authorization: 'Bearer token1'
+          }
         });
+        expect(config2).toEqual({
+          headers: {
+            Authorization: 'Bearer token1'
+          }
+        });
+      });
     });
 
     test('should handle errors correctly', () => {
@@ -252,15 +261,14 @@ describe('axios-token-interceptor', () => {
       };
 
       const interceptor = plugin(options);
-      return interceptor({ headers: {} })
-        .catch((err) => {
-          expect(err.message).toEqual('unable to fetch token');
-        });
+      return interceptor({ headers: {} }).catch((err) => {
+        expect(err.message).toEqual('unable to fetch token');
+      });
     });
   });
 
   describe('axios', () => {
-    test('should send the header to the api', () => {
+    test('GET: should send the header to the api', () => {
       const options = {
         getToken: () => Promise.resolve('abc')
       };
@@ -270,15 +278,32 @@ describe('axios-token-interceptor', () => {
       });
       instance.interceptors.request.use(plugin(options));
 
-      const request = nock('https://api.example.com', {
-        reqheaders: {
-          authorization: 'Bearer abc'
-        }
-      })
-      .get('/foo')
-      .reply(200);
+      const request = nock('https://api.example.com')
+        .matchHeader('Authorization', 'Bearer abc')
+        .get('/foo')
+        .reply(200);
 
       return instance.get('/foo').then(() => {
+        expect(request.isDone()).toBeTruthy();
+      });
+    });
+
+    test('POST: should send the header to the api', () => {
+      const options = {
+        getToken: () => Promise.resolve('abc')
+      };
+
+      const instance = axios.create({
+        baseURL: 'https://api.example.com'
+      });
+      instance.interceptors.request.use(plugin(options));
+
+      const request = nock('https://api.example.com')
+        .matchHeader('Authorization', 'Bearer abc')
+        .post('/foo')
+        .reply(200);
+
+      return instance.post('/foo').then(() => {
         expect(request.isDone()).toBeTruthy();
       });
     });
